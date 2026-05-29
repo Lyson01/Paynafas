@@ -1,0 +1,47 @@
+[project]
+name = "salary-expense-telegram-bot"
+version = "0.1.0"
+description = "Telegram bot for personal salary-period income and expense tracking"
+requires-python = ">=3.12"
+dependencies = [
+    "aiogram>=3.13,<4",
+    "SQLAlchemy[asyncio]>=2.0,<3",
+    "asyncpg>=0.29,<1",
+    "aiosqlite>=0.20,<1",
+    "alembic>=1.13,<2",
+    "pydantic-settings>=2.4,<3",
+    "redis>=5.0,<6",
+    "APScheduler>=3.10,<4",
+    "timezonefinder>=8.2,<9",
+    "geopy>=2.4,<3",
+    "openpyxl>=3.1,<4",
+    "python-dateutil>=2.9,<3",
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.32,<1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3,<9",
+    "pytest-asyncio>=0.24,<1",
+    "ruff>=0.6,<1",
+    "black>=24.8,<25",
+]
+
+[tool.black]
+line-length = 100
+target-version = ["py312"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "ASYNC"]
+ignore = ["B008"]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
+testpaths = ["app/tests"]
+pythonpath = ["."]

@@ -1,0 +1,12 @@
+.git
+.venv
+__pycache__
+.pytest_cache
+.ruff_cache
+*.pyc
+*.log
+.env
+.env.local
+.env.production
+postgres_data
+redis_data

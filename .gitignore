@@ -1,0 +1,15 @@
+.env
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.py[cod]
+*.log
+*.pid
+post_reboot_start_bot.ps1
+.pytest_cache/
+.ruff_cache/
+*.egg-info/
+postgres_data/
+redis_data/
+*.db
