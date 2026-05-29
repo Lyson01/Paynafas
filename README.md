@@ -166,20 +166,26 @@ cd uchot
 
 ### Railway Variables
 
-В Railway Dashboard откройте проект → `Variables` и добавьте переменные из `.env.example`. Минимальный набор:
+Перед запуском добавьте в Railway проект:
+
+1. `Postgres` service.
+2. `Redis` service.
+3. В сервисе бота откройте `Variables` и добавьте ссылки на переменные этих сервисов.
+
+Минимальный набор:
 
 ```env
 BOT_TOKEN=your_real_telegram_bot_token
 ADMIN_IDS=6048168849
 LIFETIME_PREMIUM_TELEGRAM_IDS=6048168849
-DATABASE_URL=postgresql+asyncpg://USER:PASSWORD@HOST:PORT/DB
+DATABASE_URL=${{Postgres.DATABASE_URL}}
 REDIS_URL=redis://default:PASSWORD@HOST:PORT
 DEFAULT_TIMEZONE=Asia/Tashkent
 DEFAULT_CURRENCY=UZS
 DEFAULT_LANGUAGE=ru
 ```
 
-Если Railway PostgreSQL выдает URL вида `postgresql://...`, замените схему на `postgresql+asyncpg://...`.
+Если Railway PostgreSQL выдает URL вида `postgresql://...`, приложение само преобразует его в `postgresql+asyncpg://...`.
 
 Если Redis URL начинается с `rediss://`, оставьте `rediss://`.
 

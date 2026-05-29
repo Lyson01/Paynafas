@@ -98,6 +98,18 @@ class Settings(BaseSettings):
             return text.upper()
         return text.lower()
 
+    @field_validator("database_url", mode="before")
+    @classmethod
+    def normalize_database_url(cls, value: Any) -> str:
+        text = str(value or "").strip()
+        if text.startswith("postgresql+asyncpg://"):
+            return text
+        if text.startswith("postgresql://"):
+            return "postgresql+asyncpg://" + text.removeprefix("postgresql://")
+        if text.startswith("postgres://"):
+            return "postgresql+asyncpg://" + text.removeprefix("postgres://")
+        return text
+
 
 @lru_cache
 def get_settings() -> Settings:

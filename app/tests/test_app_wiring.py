@@ -27,6 +27,16 @@ def test_env_example_matches_settings_aliases() -> None:
     assert example_keys == aliases
 
 
+def test_database_url_normalizes_railway_postgres_scheme() -> None:
+    settings = Settings(
+        BOT_TOKEN="token",
+        DATABASE_URL="postgresql://user:pass@host:5432/db",
+        REDIS_URL="redis://host:6379/0",
+    )
+
+    assert settings.database_url == "postgresql+asyncpg://user:pass@host:5432/db"
+
+
 @pytest.mark.asyncio
 async def test_handlers_are_registered() -> None:
     dispatcher = create_dispatcher()
