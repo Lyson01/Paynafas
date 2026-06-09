@@ -28,7 +28,8 @@ MESSAGES = {
         "Buni sozlamalarda o‘zgartirishingiz mumkin."
     ),
     "registration_done": "Tayyor. Endi xarajat va daromadlarni oddiy matn bilan yozing.",
-    "unknown_amount": "Summani tushunmadim. Masalan: kofe 25000, taksi 18000, oylik 5000000",
+    "registration_incomplete": "Avval bot sozlamasini yakunlang. Bu bir daqiqadan kam vaqt oladi.",
+    "unknown_amount": "Summani tushunmadim. Tavsif va summani bitta xabarda yuboring.",
     "expense_saved": (
         "Xarajat yozildi:\n"
         "{emoji} {title} — {amount}\n\n"
@@ -71,17 +72,14 @@ MESSAGES = {
     "premium_required": "Bu funksiya Premium uchun.",
     "reminder_daily": (
         "Bugun hali xarajat yozmadingiz.\n\n"
-        "Masalan: kofe 25000 yoki taksi 18000.\n\n"
-        "Agar xarajat bo‘lmasa tugmani bosing."
+        "Xarajatni xabar bilan yuboring yoki xarajat bo‘lmasa tugmani bosing."
     ),
     "reminder_disabled": "Kundalik eslatmalar o‘chirildi.",
     "salary_reminder": "Yangi oylik yaqin. Joriy davr yakunini ko‘rasizmi?",
     "settings": "Sozlamalar:\nValyuta: {currency}\nVaqt zonasi: {timezone}\nTil: {language}",
     "help": (
-        "Misollar:\n"
-        "kofe 25000\n"
-        "kecha mahsulotlar 120000\n"
-        "oylik 5000000\n\n"
+        "Xarajat va daromadlarni bitta xabarda yuboring. "
+        "Men summa, sana, valyuta va kategoriyani saqlayman.\n\n"
         "Buyruqlar: /today /week /month /period /balance /history "
         "/delete_last /settings /premium /export"
     ),

@@ -28,7 +28,8 @@ MESSAGES = {
         "You can change this in settings."
     ),
     "registration_done": "Done. Now send expenses and income in plain text.",
-    "unknown_amount": "I could not find the amount. Try: coffee 25000, taxi 18000, salary 5000000",
+    "registration_incomplete": "Finish the bot setup first. It takes less than a minute.",
+    "unknown_amount": "I could not find the amount. Send a description and amount in one message.",
     "expense_saved": (
         "Saved expense:\n"
         "{emoji} {title} — {amount}\n\n"
@@ -68,17 +69,14 @@ MESSAGES = {
     "premium_required": "This feature requires Premium.",
     "reminder_daily": (
         "You have not recorded any expenses today.\n\n"
-        "Send: coffee 25000 or taxi 18000.\n\n"
-        "Or press the button if there were no expenses."
+        "Send an expense message or press the button if there were no expenses."
     ),
     "reminder_disabled": "Daily reminders disabled.",
     "salary_reminder": "New salary is coming soon. Want to see the current period summary?",
     "settings": "Settings:\nCurrency: {currency}\nTimezone: {timezone}\nLanguage: {language}",
     "help": (
-        "Examples:\n"
-        "coffee 25000\n"
-        "yesterday groceries 120000\n"
-        "salary 5000000\n\n"
+        "Send expenses and income in one message. "
+        "I will save the amount, date, currency and category.\n\n"
         "Commands: /today /week /month /period /balance /history "
         "/delete_last /settings /premium /export"
     ),

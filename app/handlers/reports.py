@@ -49,7 +49,10 @@ async def cmd_period(message: Message, session: AsyncSession) -> None:
     service = ReportService(session)
     period, data = await service.salary_period(user)
     if period is None or data is None:
-        await message.answer("Активного зарплатного периода пока нет. Напиши: зарплата 5000000")
+        await message.answer(
+            "Активного зарплатного периода пока нет. "
+            "Добавь доход как зарплату, чтобы начать период."
+        )
         return
     premium = await SubscriptionService(session).is_premium(user)
     await message.answer(

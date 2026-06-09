@@ -60,20 +60,13 @@ async def cmd_delete_last(message: Message, session: AsyncSession) -> None:
 @router.message(F.text == "➕ Добавить расход")
 async def menu_add_expense(message: Message, state: FSMContext) -> None:
     await state.set_state(ADD_EXPENSE_STATE)
-    await message.answer(
-        "Напиши расход обычным текстом:\n"
-        "кофе 25000\n"
-        "такси 18000\n"
-        "вчера в 21:30 аптека 70000"
-    )
+    await message.answer("Напиши расход одним сообщением. Укажи описание и сумму.")
 
 
 @router.message(F.text == "💰 Добавить доход")
 async def menu_add_income(message: Message, state: FSMContext) -> None:
     await state.set_state(ADD_INCOME_STATE)
-    await message.answer(
-        "Напиши доход обычным текстом:\n" "зарплата 5000000\n" "аванс 2000000\n" "подработка 300000"
-    )
+    await message.answer("Напиши доход одним сообщением. Укажи источник и сумму.")
 
 
 @router.message(F.text & ~F.text.startswith("/"))
@@ -85,7 +78,7 @@ async def parse_transaction(message: Message, session: AsyncSession, state: FSMC
     if user.is_blocked:
         return
     if not user.settings.registration_completed:
-        await message.answer(t(user.settings.language, "start_new"))
+        await message.answer(t(user.settings.language, "registration_incomplete"))
         return
     text = message.text or ""
     current_state = await state.get_state()
