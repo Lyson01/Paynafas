@@ -61,6 +61,7 @@ class ParserService:
         "k": Decimal("1000"),
         "тыс": Decimal("1000"),
     }
+    MULTIPLIER_RE = r"(?:млн|миллион(?:а|ов)?|тыс|[kкm])(?![a-zа-яё])"
     INCOME_KEYWORDS = {
         "зарплата",
         "зп",
@@ -150,7 +151,7 @@ class ParserService:
     AMOUNT_RE = re.compile(
         rf"(?P<prefix>{CURRENCY_RE})?\s*(?P<sign>[+-])?\s*"
         r"(?P<number>\d+(?:[\s.,]\d+)*)\s*"
-        r"(?P<mult>млн|миллион(?:а|ов)?|тыс|[kкm])?\s*"
+        rf"(?P<mult>{MULTIPLIER_RE})?\s*"
         rf"(?P<currency>{CURRENCY_RE})?",
         re.IGNORECASE,
     )

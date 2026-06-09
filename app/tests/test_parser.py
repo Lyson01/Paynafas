@@ -52,6 +52,23 @@ def test_parse_absolute_date_defaults_to_noon() -> None:
     assert parsed.amount == Decimal("45000")
 
 
+def test_parse_amount_before_word_starting_with_multiplier_letter() -> None:
+    parsed = ParserService().parse("63000 карго одежда для собир ака", now=fixed_now())
+
+    assert parsed.amount == Decimal("63000")
+    assert parsed.type == TransactionType.EXPENSE
+    assert parsed.category_slug == "clothes"
+    assert parsed.comment == "карго одежда для собир ака"
+
+
+def test_parse_standalone_thousand_multiplier() -> None:
+    assert ParserService().parse("300к", now=fixed_now()).amount == Decimal("300000")
+    assert ParserService().parse("300 k", now=fixed_now()).amount == Decimal("300000")
+    parsed = ParserService().parse("300 kzt", now=fixed_now())
+    assert parsed.amount == Decimal("300")
+    assert parsed.currency == "KZT"
+
+
 def test_parse_forced_income_from_plain_amount() -> None:
     parsed = ParserService().parse(
         "50000",
