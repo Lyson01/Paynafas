@@ -28,6 +28,9 @@ from app.utils.text import html
 
 router = Router(name="transactions")
 
+ADD_EXPENSE_STATE = "transaction_waiting_expense"
+ADD_INCOME_STATE = "transaction_waiting_income"
+
 CATEGORY_EMOJI = {
     "кафе": "☕",
     "транспорт": "🚕",
@@ -54,13 +57,22 @@ async def cmd_delete_last(message: Message, session: AsyncSession) -> None:
     )
 
 
-@router.message(F.text.in_({"➕ Добавить расход", "💰 Добавить доход"}))
-async def menu_add_transaction(message: Message) -> None:
+@router.message(F.text == "➕ Добавить расход")
+async def menu_add_expense(message: Message, state: FSMContext) -> None:
+    await state.set_state(ADD_EXPENSE_STATE)
     await message.answer(
-        "Напиши операцию обычным текстом:\n"
+        "Напиши расход обычным текстом:\n"
         "кофе 25000\n"
-        "зарплата 5000000\n"
+        "такси 18000\n"
         "вчера в 21:30 аптека 70000"
+    )
+
+
+@router.message(F.text == "💰 Добавить доход")
+async def menu_add_income(message: Message, state: FSMContext) -> None:
+    await state.set_state(ADD_INCOME_STATE)
+    await message.answer(
+        "Напиши доход обычным текстом:\n" "зарплата 5000000\n" "аванс 2000000\n" "подработка 300000"
     )
 
 
@@ -76,10 +88,18 @@ async def parse_transaction(message: Message, session: AsyncSession, state: FSMC
         await message.answer(t(user.settings.language, "start_new"))
         return
     text = message.text or ""
+    current_state = await state.get_state()
+    forced_type = None
+    if current_state == ADD_EXPENSE_STATE:
+        forced_type = TransactionType.EXPENSE
+    elif current_state == ADD_INCOME_STATE:
+        forced_type = TransactionType.INCOME
+
     parsed = ParserService().parse(
         text,
         default_currency=user.settings.default_currency,
         timezone=user.settings.timezone,
+        forced_type=forced_type,
     )
     if parsed.amount is None or parsed.type is None:
         await message.answer(t(user.settings.language, "unknown_amount"))
@@ -101,7 +121,10 @@ async def parse_transaction(message: Message, session: AsyncSession, state: FSMC
 
     result = await TransactionService(session).save_parsed(user, parsed)
     transaction = result.transaction
+    should_clear_add_state = current_state in {ADD_EXPENSE_STATE, ADD_INCOME_STATE}
     if transaction.type == TransactionType.EXPENSE:
+        if should_clear_add_state:
+            await state.clear()
         await _reply_expense(message, user, transaction, result.has_active_period, session)
         return
 
@@ -110,6 +133,8 @@ async def parse_transaction(message: Message, session: AsyncSession, state: FSMC
         await state.set_state("salary_waiting_next")
         await state.update_data(transaction_id=transaction.id)
         salary_line = t(user.settings.language, "salary_offer")
+    elif should_clear_add_state:
+        await state.clear()
     await message.answer(
         t(
             user.settings.language,

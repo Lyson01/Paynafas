@@ -115,6 +115,8 @@ class ParserService:
         "other_expense": "другое",
         "other_income": "другое",
     }
+    INCOME_CATEGORY_SLUGS = {"salary", "advance", "bonus", "debt_return", "other_income"}
+    EXPENSE_CATEGORY_SLUGS = set(CATEGORY_NAMES) - INCOME_CATEGORY_SLUGS
     MONTHS = {
         "января": 1,
         "январь": 1,
@@ -173,6 +175,7 @@ class ParserService:
         default_currency: str = "UZS",
         timezone: str = "Asia/Tashkent",
         now: datetime | None = None,
+        forced_type: TransactionType | None = None,
     ) -> ParsedTransaction:
         raw_text = clean_spaces(text)
         local_now = now.astimezone(get_zone(timezone)) if now else now_in_timezone(timezone)
@@ -184,8 +187,11 @@ class ParserService:
         amount, currency, amount_spans = self._parse_amount(
             lower, default_currency, date_time_spans
         )
-        type_ = self._detect_type(lower, amount)
-        is_salary_related = any(keyword in lower for keyword in self.SALARY_KEYWORDS)
+        detected_type = self._detect_type(lower, amount)
+        type_ = forced_type or detected_type
+        is_salary_related = type_ == TransactionType.INCOME and any(
+            keyword in lower for keyword in self.SALARY_KEYWORDS
+        )
         category_slug = self._detect_category(lower, type_)
         category_name = self.CATEGORY_NAMES.get(category_slug or "")
         comment = self._build_comment(raw_text, [*date_time_spans, *amount_spans])
@@ -357,6 +363,10 @@ class ParserService:
 
     def _detect_category(self, text: str, type_: TransactionType | None) -> str | None:
         for slug, keywords in self.CATEGORY_KEYWORDS.items():
+            if type_ == TransactionType.INCOME and slug not in self.INCOME_CATEGORY_SLUGS:
+                continue
+            if type_ == TransactionType.EXPENSE and slug not in self.EXPENSE_CATEGORY_SLUGS:
+                continue
             if any(keyword in text for keyword in keywords):
                 return slug
         if type_ == TransactionType.INCOME:

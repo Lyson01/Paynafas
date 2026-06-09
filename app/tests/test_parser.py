@@ -50,3 +50,29 @@ def test_parse_absolute_date_defaults_to_noon() -> None:
     assert parsed.operation_datetime.date().isoformat() == "2026-05-05"
     assert parsed.operation_datetime.strftime("%H:%M") == "12:00"
     assert parsed.amount == Decimal("45000")
+
+
+def test_parse_forced_income_from_plain_amount() -> None:
+    parsed = ParserService().parse(
+        "50000",
+        now=fixed_now(),
+        forced_type=TransactionType.INCOME,
+    )
+
+    assert parsed.amount == Decimal("50000")
+    assert parsed.type == TransactionType.INCOME
+    assert parsed.category_slug == "other_income"
+    assert parsed.is_salary_related is False
+
+
+def test_parse_forced_expense_ignores_salary_keyword() -> None:
+    parsed = ParserService().parse(
+        "зарплата 5000000",
+        now=fixed_now(),
+        forced_type=TransactionType.EXPENSE,
+    )
+
+    assert parsed.amount == Decimal("5000000")
+    assert parsed.type == TransactionType.EXPENSE
+    assert parsed.category_slug == "other_expense"
+    assert parsed.is_salary_related is False
